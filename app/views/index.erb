@@ -1,0 +1,17 @@
+  <h1>Bienvenido a Sinatra!</h1>
+  <p>Este es un esqueleto de sinatra que armamos para ti</p>
+
+  <p> BIENVENIDO A TU PÁGINA WEB </p>
+
+  <p><%= session[:email] %> </p>
+  <p><%= session[:user_name] %> </p>
+  <p id="html"></p>
+
+  <form id="registro" action="/register_temp" method="get">
+    <br><input type="submit" value="Registrar!"> <br>
+
+  </form>
+
+  <form id="login" action="/login_temp" method="get">
+    <br><input type="submit" value="Login!"> <br>
+  </form>

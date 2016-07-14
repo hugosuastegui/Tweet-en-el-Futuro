@@ -17,6 +17,9 @@ gem 'rake'
 
 gem 'shotgun'
 
+gem 'twitter'
+gem 'oauth'
+
 group :test do
   gem 'faker'
   gem 'rspec'

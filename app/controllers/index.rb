@@ -15,6 +15,42 @@ post '/tweet' do
   @user_tweet.text
 end
 
+
+get '/sign_in' do
+  # El método `request_token` es uno de los helpers
+  # Esto lleva al usuario a una página de twitter donde sera atentificado con sus credenciales
+  # p  request_token.authorize_url(:oauth_callback => "http://#{host_and_port}/auth")
+  redirect request_token.authorize_url(:oauth_callback => "http://#{host_and_port}/auth")
+  # Cuando el usuario otorga sus credenciales es redirigido a la callback_url 
+  # Dentro de params twitter regresa un 'request_token' llamado 'oauth_verifier'
+
+end
+
+get '/auth' do
+  # Volvemos a mandar a twitter el 'request_token' a cambio de un 'acces_token' 
+  # Este 'acces_token' lo utilizaremos para futuras comunicaciones.   
+  @access_token = request_token.get_access_token(:oauth_verifier => params[:oauth_verifier])
+  p  @access_token
+  # Despues de utilizar el 'request token' ya podemos borrarlo, porque no vuelve a servir. 
+  session.delete(:request_token)
+  # Aquí es donde deberás crear la cuenta del usuario y guardar usando el 'acces_token' lo siguiente:
+  # nombre, oauth_token y oauth_token_secret
+  @nombre = params[:screen_name]
+  @oauth_token = params[:oauth_token]
+  @oauth_token_secret = params[:oauth_token_secret]
+  # No olvides crear su sesión 
+
+  user = TwitterUser.create(name: @nombre, oauth_token: @oauth_token, oauth_token_secret: @oauth_token_secret)
+  user_client = TwitterUser.novo(@oauth_token, @oauth_token_secret)
+  erb :secret
+end
+
+get '/logout' do 
+
+  session.destroy 
+  erb :index
+end
+
 get '/:handle' do 
   @twitter_handle = params[:handle]
   user = TwitterUser.find_or_create_by(name: @twitter_handle)
@@ -22,4 +58,4 @@ get '/:handle' do
   @all_tweets = Tweet.where(user_id: user.id)
   erb :secret
 end
-
+  # Para el signout no olvides borrar el hash de session

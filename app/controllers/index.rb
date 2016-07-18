@@ -1,3 +1,4 @@
+
 get '/' do
   erb :index
 end
@@ -5,6 +6,13 @@ end
 post '/fetch' do 
   @twitter_handle = params[:twitter_handle]
   redirect to  ("/#{@twitter_handle}")
+end
+
+post '/tweet' do
+  tweet = params[:tweet_content2]
+  # user = TwitterUser.find_or_create_by(name: @twitter_handle)
+  @user_tweet = TCLIENT.update(tweet)
+  @user_tweet.text
 end
 
 get '/:handle' do 

@@ -11,8 +11,11 @@ end
 post '/tweet' do
   tweet = params[:tweet_content2]
   # user = TwitterUser.find_or_create_by(name: @twitter_handle)
-  @user_tweet = TCLIENT.update(tweet)
-  @user_tweet.text
+  # @user_tweet = TCLIENT.update(tweet)
+  # @user_tweet.text
+  # @current_user.novo(tweet)
+  p current_user
+  current_user.novo(tweet)
 end
 
 
@@ -35,14 +38,18 @@ get '/auth' do
   session.delete(:request_token)
   # Aquí es donde deberás crear la cuenta del usuario y guardar usando el 'acces_token' lo siguiente:
   # nombre, oauth_token y oauth_token_secret
-  @nombre = params[:screen_name]
-  @oauth_token = params[:oauth_token]
-  @oauth_token_secret = params[:oauth_token_secret]
+  p screen_name = @access_token.params[:screen_name]
+  p oauth_token = @access_token.params[:oauth_token]
+  p oauth_token_secret = @access_token.params[:oauth_token_secret]
   # No olvides crear su sesión 
-
-  user = TwitterUser.create(name: @nombre, oauth_token: @oauth_token, oauth_token_secret: @oauth_token_secret)
-  user_client = TwitterUser.novo(@oauth_token, @oauth_token_secret)
-  erb :secret
+  if user = TwitterUser.find_by(name: screen_name)
+    user.update(oauth_token: oauth_token, oauth_token_secret: oauth_token_secret)
+    session[:user_id] = user.id
+  else 
+    user = TwitterUser.create(name: screen_name, oauth_token: oauth_token, oauth_token_secret: oauth_token_secret)
+    session[:user_id] = user.id
+  end
+  erb :index
 end
 
 get '/logout' do 

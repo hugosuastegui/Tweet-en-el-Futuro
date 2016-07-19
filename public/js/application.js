@@ -6,10 +6,7 @@ $(document).ready(function() {
   $('#submit_tweet_content').click(function(event){
     event.preventDefault();
     var tweet_content2 = $('#input').val();
-    console.log(tweet_content2);
    $.post("/tweet", {tweet_content2: tweet_content2}, function(data){
-    console.log("**************")
-    console.log(data);
     $('#content_changer').html(data);
    }); 
   });

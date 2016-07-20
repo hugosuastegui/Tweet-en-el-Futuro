@@ -1,25 +1,7 @@
-<h1>Bienvenido a Twitter API.</h1>
+<h1>Bienvenido a Twitter en el FUTURO.</h1>
 <div id="container">
-  <!-- <form action="/fetch" method="post">
-    <input type="text" name="twitter_handle" placeholder="Twitter Handle">&nbsp
-    <input type="submit" name="submit_twitter_handle" value="Submit.">&nbsp
-  </form> -->
-  <%if current_user%>
-      <form action="/tweet" method="post">
-      <input type="text" id="input" name="tweet_content" placeholder="Tweet">&nbsp
-      <input type="submit" id="submit_tweet_content" name="submit_tweet_content" value="Submit.">&nbsp
-    </form>
-  <%end%>
-</div><br><br>
-
-<%if current_user%>
-  <div>
-    <p>Posted Tweet:</p>
-  </div>
-  <div id="content_changer">
-  </div><br><br>
-<%end%>
-
-<form action="/sign_in" method="get">
-  <input type="submit" value="LOG IN WITH TWITTER">
-</form>
+  <form action="/sign_in" method="get">
+    <input type="submit" value="LOG IN WITH TWITTER">
+  </form>
+</div>
+>

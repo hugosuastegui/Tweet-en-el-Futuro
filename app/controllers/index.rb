@@ -3,22 +3,6 @@ get '/' do
   erb :index
 end
 
-post '/fetch' do 
-  @twitter_handle = params[:twitter_handle]
-  redirect to  ("/#{@twitter_handle}")
-end
-
-post '/tweet' do
-  tweet = params[:tweet_content2]
-  # user = TwitterUser.find_or_create_by(name: @twitter_handle)
-  # @user_tweet = TCLIENT.update(tweet)
-  # @user_tweet.text
-  # @current_user.novo(tweet)
-  p current_user
-  current_user.novo(tweet)
-end
-
-
 get '/sign_in' do
   # El método `request_token` es uno de los helpers
   # Esto lleva al usuario a una página de twitter donde sera atentificado con sus credenciales
@@ -33,7 +17,7 @@ get '/auth' do
   # Volvemos a mandar a twitter el 'request_token' a cambio de un 'acces_token' 
   # Este 'acces_token' lo utilizaremos para futuras comunicaciones.   
   @access_token = request_token.get_access_token(:oauth_verifier => params[:oauth_verifier])
-  p  @access_token
+  p @access_token
   # Despues de utilizar el 'request token' ya podemos borrarlo, porque no vuelve a servir. 
   session.delete(:request_token)
   # Aquí es donde deberás crear la cuenta del usuario y guardar usando el 'acces_token' lo siguiente:
@@ -49,7 +33,15 @@ get '/auth' do
     user = TwitterUser.create(name: screen_name, oauth_token: oauth_token, oauth_token_secret: oauth_token_secret)
     session[:user_id] = user.id
   end
-  erb :index
+  @list_tweets = Tweet.where(twitter_user_id: user.id) 
+  erb :secret
+end
+
+post '/tweet' do
+  tweet_content = params[:tweet_content]
+  tweet_time = params[:tweet_time]
+  tweet_later(tweet_content, tweet_time)
+  
 end
 
 get '/logout' do 
@@ -58,11 +50,17 @@ get '/logout' do
   erb :index
 end
 
-get '/:handle' do 
-  @twitter_handle = params[:handle]
-  user = TwitterUser.find_or_create_by(name: @twitter_handle)
-  Tweet.base(@twitter_handle)
-  @all_tweets = Tweet.where(user_id: user.id)
-  erb :secret
+get '/status/:job_id' do
+  # regresa el status de un job a una petición AJAX
+  jid = params[:job_id]
+  @current_tweet = Tweet.find_by(job_id: jid).content
+
+  if job_is_complete(jid) == false
+    @message = "Tweet being processed or in queue"
+  else
+    @message = "Tweet has been completed"
+  end
+
+  erb :tweet_status
 end
-  # Para el signout no olvides borrar el hash de session
+

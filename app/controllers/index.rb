@@ -40,10 +40,11 @@ end
 post '/tweet' do
   tweet_content = params[:tweet_content]
   tweet_time = params[:tweet_time]
-  tweet_later(tweet_content, tweet_time)
-  
+  current_user.tweet_later(tweet_content, tweet_time.to_i)
+  @list_tweets = Tweet.where(twitter_user_id: current_user.id) 
+  erb :secret
 end
-
+  
 get '/logout' do 
 
   session.destroy 
@@ -53,8 +54,8 @@ end
 get '/status/:job_id' do
   # regresa el status de un job a una petición AJAX
   jid = params[:job_id]
-  @current_tweet = Tweet.find_by(job_id: jid).content
-
+  current_tweet = Tweet.find_by(job_id: jid)
+  @current_tweet_content = current_tweet.content
   if job_is_complete(jid) == false
     @message = "Tweet being processed or in queue"
   else
